@@ -173,14 +173,19 @@ class GenerateUserAgent:
             str: The latest version of Google Chrome.
         """
         response = self.getWebdriverPage(
-            "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json"
+            "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json",
         )
         data = response.json()
         return data["channels"]["Stable"]["version"]
 
     @staticmethod
     def getWebdriverPage(url: str) -> Response:
+        proxies = {
+            "http": "http://CHT1HTSH3212:PLM200456z@10.25.71.1:8080/",
+            "https": "https://CHT1HTSH3212:PLM200456z@10.25.71.1:8080/"
+        }
         response = None
+        # response = requests.get(url, proxies=proxies)
         response = requests.get(url)
         if response.status_code != requests.codes.ok:  # pylint: disable=no-member
             raise HTTPError(

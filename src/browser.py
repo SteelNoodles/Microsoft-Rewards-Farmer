@@ -58,6 +58,7 @@ class Browser:
     ) -> WebDriver:
         options = webdriver.ChromeOptions()
         options.headless = self.headless
+        # options.headless = False
         options.add_argument(f"--lang={self.localeLang}")
         options.add_argument("--log-level=3")
 
@@ -67,21 +68,23 @@ class Browser:
 
         seleniumwireOptions: dict[str, Any] = {"verify_ssl": False}
 
+        seleniumLogger = logging.getLogger("seleniumwire")
+        seleniumLogger.setLevel(logging.ERROR)
+
+        self.proxy = False
         if self.proxy:
             seleniumwireOptions["proxy"] = {
-                "http": self.proxy,
-                "https": self.proxy,
+                "http": "http://CHT1HTSH3212:PLM200456z@10.25.71.1:8080/",
+                "https": "https://CHT1HTSH3212:PLM200456z@10.25.71.1:8080/",
                 "no_proxy": "localhost,127.0.0.1",
             }
 
         driver = webdriver.Chrome(
             options=options,
+            version_main=116,
             seleniumwire_options=seleniumwireOptions,
             user_data_dir=self.userDataDir.as_posix(),
         )
-
-        seleniumLogger = logging.getLogger("seleniumwire")
-        seleniumLogger.setLevel(logging.ERROR)
 
         if self.browserConfig.get("sizes"):
             deviceHeight = self.browserConfig["sizes"]["height"]
@@ -167,14 +170,15 @@ class Browser:
         return sessionsDir
 
     def getCCodeLang(self, lang: str, geo: str) -> tuple:
-        if lang is None or geo is None:
-            try:
-                nfo = ipapi.location()
-                if isinstance(nfo, dict):
-                    if lang is None:
-                        lang = nfo["languages"].split(",")[0].split("-")[0]
-                    if geo is None:
-                        geo = nfo["country"]
-            except Exception:  # pylint: disable=broad-except
-                return ("en", "US")
-        return (lang, geo)
+        # if lang is None or geo is None:
+        #     try:
+        #         nfo = ipapi.location()
+        #         if isinstance(nfo, dict):
+        #             if lang is None:
+        #                 lang = nfo["languages"].split(",")[0].split("-")[0]
+        #             if geo is None:
+        #                 geo = nfo["country"]
+        #     except Exception:  # pylint: disable=broad-except
+        #         return ("en", "US")
+        # return (lang, geo)
+        return ("zh-CN", "CN")

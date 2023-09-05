@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import random
@@ -5,6 +6,7 @@ import time
 from datetime import date, timedelta
 
 import requests
+from bs4 import BeautifulSoup
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 
@@ -37,6 +39,29 @@ class Searches:
         del searchTerms[wordsCount : (len(searchTerms) + 1)]
         return searchTerms
 
+    def getBaiDuTrends(self, wordsCount: int) -> list:
+        searchIterms: list[str] = []
+
+        try:
+            response = requests.get(
+                'http://top.baidu.com/buzz?b=1&fr=topindex')
+
+            if response.status_code != 200:
+                return searchIterms
+
+            response.encoding = response.apparent_encoding
+
+            soup = BeautifulSoup(response.text, 'html.parser')
+            title_list = soup.find_all(attrs={'class': 'c-single-text-ellipsis'})
+
+            for i in range(len(title_list)):
+                searchIterms.append(str(title_list[i].get_text()))
+
+        except Exception as e:
+            return searchIterms
+
+        return searchIterms
+
     def getRelatedTerms(self, word: str) -> list:
         try:
             r = requests.get(
@@ -54,7 +79,8 @@ class Searches:
         )
 
         i = 0
-        search_terms = self.getGoogleTrends(numberOfSearches)
+        # search_terms = self.getGoogleTrends(numberOfSearches)
+        search_terms = self.getBaiDuTrends(numberOfSearches)
         for word in search_terms:
             i += 1
             logging.info("[BING] " + f"{i}/{numberOfSearches}")

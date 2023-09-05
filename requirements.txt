@@ -1,5 +1,6 @@
-requests
+requests==2.29.0
 selenium
 ipapi
 undetected-chromedriver
 selenium-wire
+beautifulsoup4

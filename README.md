@@ -94,3 +94,11 @@
 ## Future Features
 
 - GUI
+
+
+## 运行环境问题
+
+-- Chrome版本和driver版本不一致 "Not supported in Chrome version 116.0.5845.111"
+解决办法"Uninstall undetected-chromedriver "，执行下述命令
+   `pip install undetected-chromedriver -U`
+
